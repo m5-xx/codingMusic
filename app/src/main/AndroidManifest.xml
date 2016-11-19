@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
+        android:name=".MainActivitys.MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/xiami"
         android:label="MusicApp"
@@ -21,6 +22,9 @@
         <activity android:name=".MainActivitys.MainActivity" />
 
         <activity android:name=".MainActivitys.PlayActivity"/>
+
+        <activity android:name=".MainActivitys.MyLikeMusicActivity"/>
+
 
         <service
             android:name=".MainActivitys.PlayServer"

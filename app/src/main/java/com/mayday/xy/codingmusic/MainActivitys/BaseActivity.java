@@ -5,6 +5,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
@@ -73,4 +74,17 @@ public abstract class BaseActivity extends FragmentActivity {
         }
     }
 
+    /**
+     * 当用户退出应用后进行保存
+     */
+    @Override
+    protected void onDestroy() {
+        MyApplication app= (MyApplication)getApplication();
+//        MyApplication app= (MyApplication) getSharedPreferences("DATA",MODE_PRIVATE);
+        SharedPreferences.Editor editor=app.sp.edit();
+        editor.putInt("currentPosition",playServer.getCurrentPositions());
+        editor.putInt("play_mode",playServer.getPlay_mode());
+        editor.commit();
+        super.onDestroy();
+    }
 }

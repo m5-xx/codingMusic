@@ -10,14 +10,13 @@ import android.net.Uri;
 import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 
-
-import com.mayday.xy.codingmusic.R;
-
 import java.io.FileDescriptor;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+
+import static com.mayday.xy.codingmusic.R.mipmap.ashin;
 
 /**
  * Created by xy-pc on 2016/11/3.
@@ -26,7 +25,7 @@ public class MediaUtils {
 
 
     public static ArrayList<Mp3Info> getmp3Infos(Context context) {
-       final Cursor cursor = context.getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, null, MediaStore.Audio.Media.DURATION + ">180000", null,
+        final Cursor cursor = context.getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, null, MediaStore.Audio.Media.DURATION + ">180000", null,
                 MediaStore.Audio.Media.DEFAULT_SORT_ORDER);
         ArrayList<Mp3Info> mp3Info = new ArrayList<>();
         for (int i = 0; i < cursor.getCount(); i++) {
@@ -52,6 +51,7 @@ public class MediaUtils {
                 mp3Info1.setId(id);
                 mp3Info1.setTitle(title);
                 mp3Info1.setAlbum(album);
+                mp3Info1.setAlbumId(albun_id);
                 mp3Info1.setArtist(artist);
                 mp3Info1.setDuration(duration);
                 mp3Info1.setUrl(url);
@@ -64,8 +64,8 @@ public class MediaUtils {
 
     //将歌曲的时间转化为分钟加秒
     public static String formatTime(long time) {
-        String min = time / (1000 * 60) + "";
-        String sec = time % (1000 + 60) + "";
+        String min = time / (1000 * 60) + "";   //4.33333
+        String sec = time % (1000 * 60) + "";      //0.33333
         if (min.length() < 2) {
             min = "0" + time / (1000 * 60) + "";
         } else {
@@ -80,6 +80,7 @@ public class MediaUtils {
         } else if (sec.length() == 1) {
             sec = "0000" + (time % (1000 * 60)) + "";
         }
+
         return min + ":" + sec.trim().substring(0, 2);
     }
 
@@ -136,10 +137,9 @@ public class MediaUtils {
     }
 
 
-
     private static Bitmap getArtworkFromFile(Context context, long songid, long albumid) {
         Bitmap bm = null;
-        byte [] art = null;
+        byte[] art = null;
         String path = null;
         if (albumid < 0 && songid < 0) {
             throw new IllegalArgumentException("Must specify an album or a song id");
@@ -175,9 +175,10 @@ public class MediaUtils {
         opts.inPreferredConfig = Bitmap.Config.RGB_565;
 
         //默认本地图片，
-        return BitmapFactory.decodeStream(context.getResources().openRawResource(R.mipmap.ashin),null,opts);
+        return BitmapFactory.decodeStream(context.getResources().openRawResource(ashin), null, opts);
 
     }
+
     private static final Uri sArtworkUri = Uri.parse("content://media/external/audio/albumart");
     private static final BitmapFactory.Options sBitmapOptions = new BitmapFactory.Options();
     private static Bitmap mCachedBit = null;

@@ -33,13 +33,13 @@ public class My_music_fragment extends Fragment implements AdapterView.OnItemCli
     //判断是否为暂停状态
 //    private boolean isPause=false;
 
-    private static My_music_fragment music_fragment;
+    static My_music_fragment music_fragment;
     private MainActivity mainActivity;
     private ArrayList<Mp3Info> mp3Info;
     private My_music_adapter adapter;
 
 
-    private int position;
+//    private int position;
 
     //提供方法供外界调用
     public static My_music_fragment newInstance() {
@@ -72,7 +72,6 @@ public class My_music_fragment extends Fragment implements AdapterView.OnItemCli
         iv_album.setOnClickListener(this);
         loadDate();
         return view;
-
     }
 
     //当切换回主界面的时候还会从新调用该方法，因此就可以达到一个同步的更新UI了
@@ -96,6 +95,8 @@ public class My_music_fragment extends Fragment implements AdapterView.OnItemCli
     private void loadDate() {
         mp3Info = MediaUtils.getmp3Infos(mainActivity);
         adapter = new My_music_adapter(mainActivity, mp3Info);
+        adapter.notifyDataSetChanged();     //加入一个临时的缓冲区
+        listView.setSelection(0);
         listView.setAdapter(adapter);
     }
 
@@ -118,7 +119,7 @@ public class My_music_fragment extends Fragment implements AdapterView.OnItemCli
             //显示专辑封面
             Bitmap bitmap = MediaUtils.getArtwork(mainActivity, mp3Info.getId(), mp3Info.getAlbumId(), true);
             iv_album.setImageBitmap(bitmap);
-            this.position = position;
+//            this.position = position;
         }
     }
 
@@ -135,7 +136,7 @@ public class My_music_fragment extends Fragment implements AdapterView.OnItemCli
                         mainActivity.playServer.start();
                     } else {
                         //如果不是暂停后播放就从第一首开始播放,后面会通过SP来处理
-                        mainActivity.playServer.play(0);
+                        mainActivity.playServer.play(mainActivity.playServer.getCurrentPositions());
                         lv_play.setImageResource(R.mipmap.play);
                     }
                 }
@@ -149,7 +150,8 @@ public class My_music_fragment extends Fragment implements AdapterView.OnItemCli
             case R.id.iv_album:
                 Intent intent = new Intent(mainActivity, PlayActivity.class);
 //                intent.putExtra("position",position);
-                startActivity(intent);
+                startActivityForResult(intent,1);
+//                startActivity(intent);
                 break;
         }
 

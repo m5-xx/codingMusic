@@ -6,6 +6,7 @@ package com.mayday.xy.codingmusic.Utils;
 public class Mp3Info {
 
     private long id;
+    private long mp3InfoId;
     private String title;//歌名
     private String artist;//歌手
     private String album;//专辑
@@ -85,5 +86,13 @@ public class Mp3Info {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public long getMp3InfoId() {
+        return mp3InfoId;
+    }
+
+    public void setMp3InfoId(long mp3InfoId) {
+        this.mp3InfoId = mp3InfoId;
     }
 }

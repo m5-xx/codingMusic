@@ -16,6 +16,7 @@
 
 package com.mayday.xy.codingmusic.MainActivitys;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -96,10 +97,12 @@ public class MainActivity extends BaseActivity {
 
         switch (item.getItemId()) {
 
-            case R.id.action_contact:
-                QuickContactFragment dialog = new QuickContactFragment();
-                dialog.show(getSupportFragmentManager(), "QuickContactFragment");
-                return true;
+            case R.id.love:
+                Intent intent=new Intent(this,MyLikeMusicActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.other:
+                break;
 
         }
 

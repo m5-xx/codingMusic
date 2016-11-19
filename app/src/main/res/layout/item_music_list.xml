@@ -8,7 +8,7 @@
         android:id="@+id/image_id"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:src="@mipmap/xiami"/>
+        android:src="@mipmap/music20"/>
 
     <TextView
         android:id="@+id/textView1"

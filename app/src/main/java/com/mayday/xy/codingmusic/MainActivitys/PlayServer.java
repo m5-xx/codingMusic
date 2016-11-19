@@ -13,27 +13,79 @@ import com.mayday.xy.codingmusic.Utils.Mp3Info;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class PlayServer extends Service {
+public class PlayServer extends Service implements MediaPlayer.OnCompletionListener, MediaPlayer.OnErrorListener {
 
     private ArrayList<Mp3Info> mp3Infos;
     private MediaPlayer mPlay;
     private int currentPosition;
     private MusicUpdateListener musicUpdateListener;
+    private Mp3Info mp3Info;
 
-    private ExecutorService es= Executors.newSingleThreadExecutor();
-    private boolean isPause=false;
+    private ExecutorService es = Executors.newSingleThreadExecutor();
+    private boolean isPause = false;
+
+    public static final int LOOP_PLAY = 1;
+    public static final int RANDOM_PLAY = 2;
+    public static final int ONES_PLAY = 3;
+
+    //选择播放模式,默认是循环播放
+    public int play_mode = LOOP_PLAY;
+
+
+    public int getPlay_mode() {
+        return play_mode;
+    }
+
+    public void setPlay_mode(int play_mode) {
+        this.play_mode = play_mode;
+    }
+
+    public void setMp3Infos(ArrayList<Mp3Info> mp3Infos) {
+        this.mp3Infos = mp3Infos;
+    }
 
     @Override
     public void onCreate() {
+        //将保存的状态还原，这里需要修改AndroidManifest.xml,因为我们自定义了Application
+        MyApplication app= (MyApplication)getApplication();
+        currentPosition = app.sp.getInt("currentPosition", 0);
+        play_mode = app.sp.getInt("play_mode", PlayServer.LOOP_PLAY);
+
         mPlay = new MediaPlayer();
         mp3Infos = MediaUtils.getmp3Infos(this);
-        //启动的音乐的时候去调用进度，因为已经进行判断了
-        es.execute(runnable);
-        super.onCreate();
+        mPlay.setOnCompletionListener(this);
+        mPlay.setOnErrorListener(this);
     }
+
+    //该方法用于判断播放模式
+    Random random = new Random();
+    @Override
+    public void onCompletion(MediaPlayer mediaPlayer) {
+        switch (play_mode) {
+            case LOOP_PLAY:
+                next();
+                break;
+            case RANDOM_PLAY:
+                play(random.nextInt(mp3Infos.size()));
+                break;
+            case ONES_PLAY:
+                play(currentPosition);
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Override
+    public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
+        mediaPlayer.reset();
+        return false;
+    }
+
 
     //Service与Activity通信
     class PlayBind extends Binder {
@@ -53,7 +105,7 @@ public class PlayServer extends Service {
     @Override
     public void onDestroy() {
         //回收一下线程
-        if (es != null && es.isShutdown()==false) {
+        if (es != null && es.isShutdown() == false) {
             es.shutdown();
             es = null;
         }
@@ -63,16 +115,18 @@ public class PlayServer extends Service {
     Runnable runnable = new Runnable() {
         @Override
         public void run() {
+            Log.d("MAYDAY1", "123456789987654321-----------------------------");
             if (musicUpdateListener != null && mPlay != null && mPlay.isPlaying()) {
+                Log.d("MAYDAY2", "123456789987654321-----------------");
                 while (true) {
                     musicUpdateListener.onProgress(getCurrentProgress());
-                    Log.d("MAYDAY", "123456789987654321");
                 }
             }
-            //每隔0.5s更新一下进度条
+            //每隔1s更新一下进度条
             try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
+                Thread.sleep(1000);
+                Log.d("MAYDAY3", "123456789987654321-----------------");
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -81,8 +135,10 @@ public class PlayServer extends Service {
 
     //从头播放
     public void play(int position) {
-        if (position >= 0 && position < mp3Infos.size()) {
-            Mp3Info mp3Info = mp3Infos.get(position);
+        if (position < 0 && position >= mp3Infos.size()) {
+            mp3Info = mp3Infos.get(0);
+        }
+            mp3Info = mp3Infos.get(position);
             try {
                 mPlay.reset();
                 mPlay.setDataSource(this, Uri.parse(mp3Info.getUrl()));
@@ -96,25 +152,25 @@ public class PlayServer extends Service {
             //自动定位到所播放歌曲的位置
             if (musicUpdateListener != null) {
                 musicUpdateListener.onChanges(currentPosition);
+                //开启播放线程
+                es.execute(runnable);
             }
-        }
     }
 
     public boolean isPlaying() {
         return mPlay.isPlaying();
     }
 
-    public boolean isPause(){
+    public boolean isPause() {
         return isPause;
     }
-
 
 
     //暂停
     public void pause() {
         if (mPlay.isPlaying()) {
             mPlay.pause();
-            isPause=true;
+            isPause = true;
         }
 
     }
@@ -146,6 +202,7 @@ public class PlayServer extends Service {
         }
     }
 
+    //在这里就不用获取总的时间长度了
     public int getDuration() {
         return mPlay.getDuration();
     }
@@ -162,7 +219,6 @@ public class PlayServer extends Service {
         }
         return 0;
     }
-
     public int getCurrentPositions() {
         return currentPosition;
     }
