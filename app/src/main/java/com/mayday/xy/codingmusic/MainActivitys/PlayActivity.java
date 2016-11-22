@@ -83,7 +83,7 @@ public class PlayActivity extends BaseActivity implements View.OnClickListener, 
 
     }
 
-    //初始化VIEW
+    //初始化VIEWPAGER
     private void initView() {
         //加载专辑界面
         View view = getLayoutInflater().inflate(R.layout.music_information, null);
@@ -92,11 +92,8 @@ public class PlayActivity extends BaseActivity implements View.OnClickListener, 
         viewList.add(view);
         //加载歌词界面
         viewList.add(getLayoutInflater().inflate(R.layout.lyric_layout, null));
-
-
     }
 
-    private static MyHandler myHandler;
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean b) {
@@ -116,6 +113,8 @@ public class PlayActivity extends BaseActivity implements View.OnClickListener, 
     public void onStopTrackingTouch(SeekBar seekBar) {
         //结束拖拽的位置
     }
+
+    private static MyHandler myHandler;
 
     static class MyHandler extends Handler {
         protected PlayActivity playActivity;
@@ -181,27 +180,28 @@ public class PlayActivity extends BaseActivity implements View.OnClickListener, 
         } else {
             play.setImageResource(R.mipmap.play);
         }
+        //当我们回到my_music_fragment然后在回来的时候就会去判断此时的一个播放状态及显示对应的图片
         switch (playServer.getPlay_mode()) {
             //可以说该switch就只是一个辅助吧!(为了防止getTag()报空指针0.0)
             case LOOP_PLAY:
                 way.setTag(LOOP_PLAY);
                 Log.d("MAYDAY", "onChang被调用啦-----------------------loop");
-//                way.setImageResource(R.mipmap.loop);
+                way.setImageResource(R.mipmap.loop);
                 break;
             case RANDOM_PLAY:
                 way.setTag(RANDOM_PLAY);
                 Log.d("MAYDAY", "onChang被调用啦-----------------------random");
-//                way.setImageResource(R.mipmap.random);
+                way.setImageResource(R.mipmap.random);
                 break;
             case ONES_PLAY:
                 way.setTag(ONES_PLAY);
                 Log.d("MAYDAY", "onChang被调用啦-----------------------ones");
-//                way.setImageResource(R.mipmap.ones);
+                way.setImageResource(R.mipmap.ones);
                 break;
             default:
                 break;
         }
-        //初始化收藏状态
+        //初始化收藏状态(再次进入这个Activity的时候去判断该歌曲是否已被收藏，若收藏了就为红心)
         initCollect();
     }
 

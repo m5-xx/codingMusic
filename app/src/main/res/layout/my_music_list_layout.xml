@@ -4,13 +4,31 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <ListView
-        android:id="@+id/lv_listview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/linearLayout"
-        android:layout_alignParentEnd="false"
-        android:layout_alignParentTop="true" />
+    <RelativeLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+        <ListView
+            android:id="@+id/lv_listview"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"
+            android:scrollbars="none" />
+
+        <com.andraskindler.quickscroll.QuickScroll
+            android:id="@+id/quickscorll"
+            android:layout_width="10dp"
+            android:layout_height="match_parent"
+            android:paddingLeft="10dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginBottom="10dp"
+            />
+    </RelativeLayout>
+
+
+
 
     <LinearLayout
         android:id="@+id/linearLayout"
@@ -50,6 +68,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/playButton"
             android:layout_width="68dp"
             android:layout_height="match_parent"
             android:orientation="horizontal">

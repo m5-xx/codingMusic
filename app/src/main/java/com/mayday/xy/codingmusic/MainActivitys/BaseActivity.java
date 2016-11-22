@@ -25,10 +25,14 @@ public abstract class BaseActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
     }
 
+
+    //连接Server的函数
     private ServiceConnection conn=new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder service) {
+                //支持绑定Server
                 PlayServer.PlayBind playBinder=(PlayServer.PlayBind)service;
+                //得到PlayServer实例的引用
                 playServer=playBinder.getPlayService();
                 isBind=true;
             //异步处理
@@ -65,6 +69,7 @@ public abstract class BaseActivity extends FragmentActivity {
             Intent intent=new Intent(this,PlayServer.class);
             bindService(intent,conn, Context.BIND_AUTO_CREATE);
             isBind=true;
+
         }
     }
     public void unBindPlayService(){

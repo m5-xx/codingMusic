@@ -35,7 +35,6 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.astuetz.PagerSlidingTabStrip;
-import com.astuetz.viewpager.extensions.sample.QuickContactFragment;
 import com.mayday.xy.codingmusic.R;
 
 public class MainActivity extends BaseActivity {
@@ -79,9 +78,9 @@ public class MainActivity extends BaseActivity {
     @Override
     public void Changes(int position) {
         //更新播放界面的UI
-        if(pager.getCurrentItem()==0){
+        if (pager.getCurrentItem() == 0) {
             my_music_fragment.changUIStatusOnPlay(position);
-        }else if(pager.getCurrentItem()==1){
+        } else if (pager.getCurrentItem() == 1) {
             //这里加载网路歌曲
         }
     }
@@ -96,9 +95,8 @@ public class MainActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
-
             case R.id.love:
-                Intent intent=new Intent(this,MyLikeMusicActivity.class);
+                Intent intent = new Intent(this, MyLikeMusicActivity.class);
                 startActivity(intent);
                 break;
             case R.id.other:
@@ -215,14 +213,14 @@ public class MainActivity extends BaseActivity {
 
         @Override
         public Fragment getItem(int position) {
-            if(position==0){
-                if(my_music_fragment==null){
-                    my_music_fragment=My_music_fragment.newInstance();
+            if (position == 0) {
+                if (my_music_fragment == null) {
+                    my_music_fragment = My_music_fragment.newInstance();
                 }
                 return my_music_fragment;
-            }else if(position==1){
-                if(net_music_fragment==null){
-                    net_music_fragment=Net_music_fragment.newInstance();
+            } else if (position == 1) {
+                if (net_music_fragment == null) {
+                    net_music_fragment = Net_music_fragment.newInstance();
                 }
                 return net_music_fragment;
             }

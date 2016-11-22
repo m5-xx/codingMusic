@@ -3,9 +3,11 @@ package com.mayday.xy.codingmusic.MainActivitys;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.andraskindler.quickscroll.QuickScroll;
 import com.mayday.xy.codingmusic.R;
 import com.mayday.xy.codingmusic.Utils.MediaUtils;
 import com.mayday.xy.codingmusic.Utils.Mp3Info;
@@ -37,9 +40,8 @@ public class My_music_fragment extends Fragment implements AdapterView.OnItemCli
     private MainActivity mainActivity;
     private ArrayList<Mp3Info> mp3Info;
     private My_music_adapter adapter;
-
-
-//    private int position;
+    //滚动条的初始化
+    private QuickScroll quickScroll;
 
     //提供方法供外界调用
     public static My_music_fragment newInstance() {
@@ -65,6 +67,7 @@ public class My_music_fragment extends Fragment implements AdapterView.OnItemCli
         singer = (TextView) view.findViewById(R.id.singer);
         lv_play = (ImageView) view.findViewById(R.id.lv_play);
         lv_next = (ImageView) view.findViewById(R.id.lv_next);
+        quickScroll=(QuickScroll) view.findViewById(R.id.quickscorll);
 
         listView.setOnItemClickListener(this);
         lv_play.setOnClickListener(this);
@@ -93,13 +96,23 @@ public class My_music_fragment extends Fragment implements AdapterView.OnItemCli
     }
 
     private void loadDate() {
+
         mp3Info = MediaUtils.getmp3Infos(mainActivity);
         adapter = new My_music_adapter(mainActivity, mp3Info);
         adapter.notifyDataSetChanged();     //加入一个临时的缓冲区
         listView.setSelection(0);
         listView.setAdapter(adapter);
+
+        initQuickScroll();
     }
 
+    //初始化QuickScroll
+    private void initQuickScroll() {
+        quickScroll.init(QuickScroll.TYPE_INDICATOR_WITH_HANDLE,listView,adapter,QuickScroll.STYLE_HOLO);
+        quickScroll.setFixedSize(1);
+        quickScroll.setTextSize(TypedValue.COMPLEX_UNIT_DIP,48);
+        quickScroll.setPopupColor(QuickScroll.BLUE_LIGHT,QuickScroll.BLUE_LIGHT_SEMITRANSPARENT,1, Color.WHITE,1);
+    }
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -107,7 +120,6 @@ public class My_music_fragment extends Fragment implements AdapterView.OnItemCli
         mainActivity.playServer.play(i);
         lv_play.setImageResource(R.mipmap.play);
     }
-
 
     //更新列表框下的播放UI
     public void changUIStatusOnPlay(int position) {
@@ -119,6 +131,11 @@ public class My_music_fragment extends Fragment implements AdapterView.OnItemCli
             //显示专辑封面
             Bitmap bitmap = MediaUtils.getArtwork(mainActivity, mp3Info.getId(), mp3Info.getAlbumId(), true);
             iv_album.setImageBitmap(bitmap);
+//            if(mainActivity.playServer.isPlaying()){
+//                lv_play.setImageResource(R.mipmap.play);
+//            }else {
+//                lv_play.setImageResource(R.mipmap.pause);
+//            }
 //            this.position = position;
         }
     }
@@ -154,7 +171,5 @@ public class My_music_fragment extends Fragment implements AdapterView.OnItemCli
 //                startActivity(intent);
                 break;
         }
-
-
     }
 }

@@ -23,6 +23,7 @@ public class SplashActivity extends Activity {
 
         handler.sendEmptyMessageDelayed(START_ACTIVITY,1000);
     }
+
     private Handler handler=new Handler(){
         @Override
         public void handleMessage(Message msg) {

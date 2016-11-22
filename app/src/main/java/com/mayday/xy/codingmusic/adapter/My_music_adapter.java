@@ -8,6 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.andraskindler.quickscroll.Scrollable;
 import com.mayday.xy.codingmusic.R;
 import com.mayday.xy.codingmusic.Utils.MediaUtils;
 import com.mayday.xy.codingmusic.Utils.Mp3Info;
@@ -17,7 +18,7 @@ import java.util.ArrayList;
 /**
  * Created by xy-pc on 2016/11/3.
  */
-public class My_music_adapter extends BaseAdapter {
+public class My_music_adapter extends BaseAdapter implements Scrollable{
 
     private Context context;
     private ArrayList<Mp3Info> mp3Infos;
@@ -68,6 +69,17 @@ public class My_music_adapter extends BaseAdapter {
 //        vh.image_id.setImageBitmap(bitmap);
 
         return view;
+    }
+
+    @Override
+    public String getIndicatorForPosition(int childposition, int groupposition) {
+        //得到该歌曲的第一个字
+        return Character.toString(mp3Infos.get(childposition).getTitle().charAt(0));
+    }
+
+    @Override
+    public int getScrollPosition(int childposition, int groupposition) {
+        return childposition;
     }
 
     //列表项布局(每一个Item) item_music_list

@@ -94,8 +94,6 @@ public class PlayServer extends Service implements MediaPlayer.OnCompletionListe
         }
     }
 
-    public PlayServer() {
-    }
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -207,7 +205,7 @@ public class PlayServer extends Service implements MediaPlayer.OnCompletionListe
         return mPlay.getDuration();
     }
 
-    //跳到某一首
+    //跳到某处
     public void seekTo(int msec) {
         mPlay.seekTo(msec);
     }
@@ -233,6 +231,7 @@ public class PlayServer extends Service implements MediaPlayer.OnCompletionListe
         void onChanges(int position);
     }
 
+    //提供一个set方法供基Activity来绑定
     public void setMusicUpdateListener(MusicUpdateListener musicUpdateListener) {
         this.musicUpdateListener = musicUpdateListener;
     }
