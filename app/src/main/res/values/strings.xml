@@ -3,5 +3,7 @@
 
     <string name="app_name">PagerSlidingTabStrip</string>
     <string name="action_contact">Contact</string>
+    <string name="download">下载</string>>
+    <string name="cancle">取消</string>
 
 </resources>

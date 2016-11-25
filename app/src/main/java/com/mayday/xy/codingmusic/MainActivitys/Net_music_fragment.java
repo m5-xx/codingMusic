@@ -1,19 +1,17 @@
 package com.mayday.xy.codingmusic.MainActivitys;
 
-import android.content.Context;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+
+import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -21,10 +19,7 @@ import android.widget.Toast;
 
 import com.mayday.xy.codingmusic.Constant.ConstantNombel;
 import com.mayday.xy.codingmusic.R;
-import com.mayday.xy.codingmusic.Utils.MediaUtils;
-import com.mayday.xy.codingmusic.Utils.Mp3Info;
 import com.mayday.xy.codingmusic.Utils.Mp3Net;
-import com.mayday.xy.codingmusic.adapter.My_music_adapter;
 import com.mayday.xy.codingmusic.adapter.Net_music_adapter;
 
 import org.jsoup.Jsoup;
@@ -37,7 +32,7 @@ import java.util.ArrayList;
 /**
  * Created by xy-pc on 2016/11/3.
  */
-public class Net_music_fragment extends Fragment implements View.OnClickListener{
+public class Net_music_fragment extends Fragment implements View.OnClickListener,AdapterView.OnItemClickListener{
     private RelativeLayout btn_select;  //点击进入搜索状态(进入后隐藏)
     private RelativeLayout select_view; //(上一个动作完成后，显示该UI)
     private LinearLayout login_Id;//加载圈
@@ -60,7 +55,6 @@ public class Net_music_fragment extends Fragment implements View.OnClickListener
 
     }
 
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -73,8 +67,10 @@ public class Net_music_fragment extends Fragment implements View.OnClickListener
         button= (Button) view.findViewById(R.id.Button);
         loadNetDateTask=new LoadNetDateTask();
         serachResults=new ArrayList<>();
+//        fragmentManager=getFragmentManager();
         loadData();
 
+        net_listView.setOnItemClickListener(this);
         btn_select.setOnClickListener(this);
         select_view.setOnClickListener(this);
 
@@ -98,6 +94,21 @@ public class Net_music_fragment extends Fragment implements View.OnClickListener
                 btn_select.setVisibility(View.GONE);
                 select_view.setVisibility(View.VISIBLE);
         }
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+        if(position>=serachResults.size()||position<0){
+            return;
+        }
+        showDownloadDialog(position);
+    }
+
+    private void showDownloadDialog(int position) {
+        //下载功能
+        DownloadDialogFragment downloadDialogFragment = DownloadDialogFragment.newInstance(serachResults.get(position));
+        //
+        downloadDialogFragment.show(getFragmentManager(),"download");//getFragmentManager()中的DownloadDialogFragment必须导入v4包
     }
 
     class LoadNetDateTask extends AsyncTask<String,Void,Integer>{//参数，进度，返回值类型
@@ -160,7 +171,7 @@ public class Net_music_fragment extends Fragment implements View.OnClickListener
                 net_listView.setVisibility(View.VISIBLE);
                 net_listView.setAdapter(new Net_music_adapter(app.getContext(),serachResults));
             }else{
-                Toast.makeText(app.getContext(),"加载失败",Toast.LENGTH_SHORT).show();
+                Toast.makeText(app.getContext(),"加载失败,请连接互联网",Toast.LENGTH_SHORT).show();
                 login_Id.setVisibility(View.GONE);
             }
             super.onPostExecute(integer);
